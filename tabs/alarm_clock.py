@@ -7,8 +7,9 @@ from PyQt6.QtCore import QTimer, Qt, QSettings, QTime
 from utils.helpers import matches_alarm_time
 
 class AlarmCard(QFrame):
-    def __init__(self, alarm_data, on_toggle, on_remove, parent=None):
+    def __init__(self, alarm_data, on_toggle, on_remove, parent_tab, parent=None):
         super().__init__(parent)
+        self.parent_tab = parent_tab
         self.alarm_id = alarm_data["id"]
         self.hour = alarm_data["hour"]
         self.minute = alarm_data["minute"]
@@ -26,20 +27,21 @@ class AlarmCard(QFrame):
         self.update_style()
         
         layout = QHBoxLayout(self)
-        layout.setContentsMargins(15, 12, 15, 12)
-        layout.setSpacing(15)
+        layout.setContentsMargins(20, 16, 20, 16)
+        layout.setSpacing(20)
 
         # Left Column: Time & description details
         left_layout = QVBoxLayout()
-        left_layout.setSpacing(4)
+        left_layout.setSpacing(6)
 
-        # Time formatting
+        # Time formatting with emoji
         qtime = QTime(self.hour, self.minute)
-        time_str = qtime.toString("hh:mm AP")
+        time_str = "⏰ " + qtime.toString("hh:mm AP")
         self.time_label = QLabel(time_str, self)
         self.time_label.setObjectName("AlarmCardTime")
         
-        self.desc_label = QLabel(self.label if self.label else "Alarm", self)
+        desc_text = "🔔 " + (self.label if self.label else "Alarm")
+        self.desc_label = QLabel(desc_text, self)
         self.desc_label.setObjectName("AlarmCardDesc")
         
         # Days translation
@@ -55,7 +57,7 @@ class AlarmCard(QFrame):
         else:
             repeat_str = ", ".join(days_names[d] for d in sorted(self.repeat_days))
             
-        self.repeat_label = QLabel(repeat_str, self)
+        self.repeat_label = QLabel("📅 " + repeat_str, self)
         self.repeat_label.setObjectName("AlarmCardRepeat")
         
         left_layout.addWidget(self.time_label)
@@ -91,10 +93,56 @@ class AlarmCard(QFrame):
         self.on_toggle(self.alarm_id, checked)
 
     def update_style(self):
-        if self.enabled:
-            self.setStyleSheet("QFrame#AlarmCard { background-color: #1e1e1e; border: 1px solid #0072ff; }")
+        theme = "dark"
+        if hasattr(self, "parent_tab") and self.parent_tab and hasattr(self.parent_tab, "theme_mode"):
+            theme = self.parent_tab.theme_mode
+            
+        if theme == "light":
+            if self.enabled:
+                self.setStyleSheet("""
+                    QFrame#AlarmCard {
+                        background-color: #ffffff;
+                        border: 1.5px solid #6366f1;
+                    }
+                    QFrame#AlarmCard:hover {
+                        background-color: #f8fafc;
+                        border-color: #818cf8;
+                    }
+                """)
+            else:
+                self.setStyleSheet("""
+                    QFrame#AlarmCard {
+                        background-color: #e2e8f0;
+                        border: 1px solid #cbd5e1;
+                    }
+                    QFrame#AlarmCard:hover {
+                        background-color: #f1f5f9;
+                        border-color: #94a3b8;
+                    }
+                """)
         else:
-            self.setStyleSheet("QFrame#AlarmCard { background-color: #151515; border: 1px solid #222222; }")
+            if self.enabled:
+                self.setStyleSheet("""
+                    QFrame#AlarmCard {
+                        background-color: #131927;
+                        border: 1px solid #6366f1;
+                    }
+                    QFrame#AlarmCard:hover {
+                        background-color: #172033;
+                        border-color: #818cf8;
+                    }
+                """)
+            else:
+                self.setStyleSheet("""
+                    QFrame#AlarmCard {
+                        background-color: #0b0f19;
+                        border: 1px solid #1e293b;
+                    }
+                    QFrame#AlarmCard:hover {
+                        background-color: #131927;
+                        border-color: #222f47;
+                    }
+                """)
 
     def start_flash(self):
         self.flash_state = True
@@ -107,7 +155,12 @@ class AlarmCard(QFrame):
 
     def blink_card(self):
         if self.flash_state:
-            self.setStyleSheet("QFrame#AlarmCard { background-color: #55171e; border: 1px solid #ff1744; }")
+            self.setStyleSheet("""
+                QFrame#AlarmCard {
+                    background-color: #450a0a;
+                    border: 1px solid #f87171;
+                }
+            """)
         else:
             self.update_style()
         self.flash_state = not self.flash_state
@@ -123,21 +176,24 @@ class AlarmClockTab(QWidget):
         self.last_checked_minute = None
         self.active_alert_card = None
         
+        global_settings = QSettings("LinuxClockApp", "GlobalSettings")
+        self.theme_mode = global_settings.value("theme_mode", "light")
+        
         self.init_ui()
         self.load_alarms()
         
     def init_ui(self):
         # Layout
         main_layout = QVBoxLayout(self)
-        main_layout.setContentsMargins(20, 20, 20, 20)
-        main_layout.setSpacing(15)
+        main_layout.setContentsMargins(24, 24, 24, 24)
+        main_layout.setSpacing(20)
         
         # Top Panel: Add Alarm Section
         add_panel = QFrame(self)
         add_panel.setObjectName("AlarmAddPanel")
         add_panel_layout = QVBoxLayout(add_panel)
-        add_panel_layout.setSpacing(10)
-        add_panel_layout.setContentsMargins(15, 15, 15, 15)
+        add_panel_layout.setSpacing(15)
+        add_panel_layout.setContentsMargins(20, 20, 20, 20)
         
         # Row 1: Time selection & Label input
         row1 = QHBoxLayout()
@@ -151,16 +207,16 @@ class AlarmClockTab(QWidget):
         self.label_edit.setPlaceholderText("Alarm Label (e.g. Wake up!)")
         self.label_edit.setObjectName("AlarmLabelEdit")
         
-        row1.addWidget(QLabel("Time:"))
+        row1.addWidget(QLabel("🕒 Time:"))
         row1.addWidget(self.time_edit)
-        row1.addWidget(QLabel("Label:"))
+        row1.addWidget(QLabel("🏷️ Label:"))
         row1.addWidget(self.label_edit)
         add_panel_layout.addLayout(row1)
         
         # Row 2: Day Repeat Toggle Buttons
         row2 = QHBoxLayout()
-        row2.setSpacing(8)
-        row2.addWidget(QLabel("Repeat on:"))
+        row2.setSpacing(10)
+        row2.addWidget(QLabel("📅 Repeat on:"))
         
         self.day_buttons = []
         days_letters = ["M", "T", "W", "T", "F", "S", "S"]
@@ -169,30 +225,18 @@ class AlarmClockTab(QWidget):
             btn.setCheckable(True)
             btn.setObjectName(f"AlarmDayBtn_{i}")
             btn.setProperty("day_index", i)
-            # Custom sizing for circular/square shape
-            btn.setFixedSize(30, 30)
-            btn.setStyleSheet("""
-                QPushButton {
-                    border-radius: 15px;
-                    border: 1px solid #3c3c3c;
-                    background-color: #222222;
-                    color: #b3b3b3;
-                    font-weight: bold;
-                }
-                QPushButton:checked {
-                    background-color: #0072ff;
-                    color: white;
-                    border: none;
-                }
-            """)
+            # Custom sizing for circular/square shape (enlarged for touch surface area)
+            btn.setFixedSize(32, 32)
             row2.addWidget(btn)
             self.day_buttons.append(btn)
             
+        self.update_day_buttons_style(self.theme_mode)
+            
         row2.addStretch()
         
-        self.add_btn = QPushButton("Add Alarm", self)
+        self.add_btn = QPushButton("➕ Add Alarm", self)
         self.add_btn.setObjectName("AlarmAddBtn")
-        self.add_btn.setFixedSize(120, 32)
+        self.add_btn.setFixedSize(130, 36)
         self.add_btn.clicked.connect(self.add_alarm)
         row2.addWidget(self.add_btn)
         
@@ -203,13 +247,16 @@ class AlarmClockTab(QWidget):
         self.scroll_area = QScrollArea(self)
         self.scroll_area.setWidgetResizable(True)
         self.scroll_area.setObjectName("AlarmScroll")
+        self.scroll_area.setFrameShape(QFrame.Shape.NoFrame)
+        self.scroll_area.setStyleSheet("background-color: transparent;")
         
         self.scroll_content = QWidget()
         self.scroll_content.setObjectName("AlarmScrollContent")
+        self.scroll_content.setStyleSheet("background-color: transparent;")
         self.scroll_layout = QVBoxLayout(self.scroll_content)
         self.scroll_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
         self.scroll_layout.setSpacing(10)
-        self.scroll_layout.setContentsMargins(0, 0, 0, 0)
+        self.scroll_layout.setContentsMargins(2, 2, 2, 2)
         
         self.scroll_area.setWidget(self.scroll_content)
         main_layout.addWidget(self.scroll_area)
@@ -251,7 +298,7 @@ class AlarmClockTab(QWidget):
             btn.setChecked(False)
             
     def create_card(self, alarm_data):
-        card = AlarmCard(alarm_data, self.toggle_alarm, self.remove_alarm, self)
+        card = AlarmCard(alarm_data, self.toggle_alarm, self.remove_alarm, self, self)
         self.scroll_layout.addWidget(card)
         self.cards[alarm_data["id"]] = card
         
@@ -343,3 +390,59 @@ class AlarmClockTab(QWidget):
             
         for alarm in self.alarms:
             self.create_card(alarm)
+
+    def update_day_buttons_style(self, theme_mode):
+        if theme_mode == "light":
+            qss = """
+                QPushButton {
+                    border-radius: 15px;
+                    border: 1px solid #cbd5e1;
+                    background-color: #f1f5f9;
+                    color: #475569;
+                    font-weight: bold;
+                }
+                QPushButton:hover {
+                    background-color: #e2e8f0;
+                    border-color: #94a3b8;
+                    color: #0f172a;
+                }
+                QPushButton:checked {
+                    background-color: #6366f1;
+                    color: white;
+                    border: none;
+                }
+                QPushButton:checked:hover {
+                    background-color: #4f46e5;
+                }
+            """
+        else:
+            qss = """
+                QPushButton {
+                    border-radius: 15px;
+                    border: 1px solid #1e293b;
+                    background-color: #0b0f19;
+                    color: #94a3b8;
+                    font-weight: bold;
+                }
+                QPushButton:hover {
+                    background-color: #131927;
+                    border-color: #222f47;
+                    color: #f8fafc;
+                }
+                QPushButton:checked {
+                    background-color: #6366f1;
+                    color: white;
+                    border: none;
+                }
+                QPushButton:checked:hover {
+                    background-color: #4f46e5;
+                }
+            """
+        for btn in self.day_buttons:
+            btn.setStyleSheet(qss)
+
+    def update_theme_styles(self, theme_mode: str):
+        self.theme_mode = theme_mode
+        self.update_day_buttons_style(theme_mode)
+        for card in self.cards.values():
+            card.update_style()
