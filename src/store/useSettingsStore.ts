@@ -9,6 +9,7 @@ interface SettingsState {
   snoozeDuration: number; // minutes
   alarmVolume: number; // 0..100
   showSeconds: boolean; // world clock show seconds
+  clockTimezone: string; // The primary timezone for the Clock page
 
   // Appearance
   transparencyEnabled: boolean;
@@ -27,6 +28,7 @@ interface SettingsState {
   setSnoozeDuration: (val: number) => void;
   setAlarmVolume: (val: number) => void;
   setShowSeconds: (val: boolean) => void;
+  setClockTimezone: (val: string) => void;
 
   // Appearance setters
   setTransparencyEnabled: (val: boolean) => void;
@@ -48,6 +50,7 @@ const defaults = {
   snoozeDuration: 9,
   alarmVolume: 80,
   showSeconds: true,
+  clockTimezone: Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC",
 
   transparencyEnabled: true,
   transparencyAmount: 65,
@@ -70,6 +73,7 @@ export const useSettingsStore = create<SettingsState>()(
       setSnoozeDuration: (val) => set({ snoozeDuration: val }),
       setAlarmVolume: (val) => set({ alarmVolume: val }),
       setShowSeconds: (val) => set({ showSeconds: val }),
+      setClockTimezone: (val) => set({ clockTimezone: val }),
 
       setTransparencyEnabled: (val) => set({ transparencyEnabled: val }),
       setTransparencyAmount: (val) => set({ transparencyAmount: val }),

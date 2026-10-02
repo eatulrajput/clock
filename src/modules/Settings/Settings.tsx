@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import { useSettingsStore, BgMode } from "../../store/useSettingsStore";
-import { RotateCcw } from "lucide-react";
+import { RotateCcw, ChevronDown, Check } from "lucide-react";
 
 /* ───────────── reusable setting row components ──────────── */
 
@@ -112,6 +112,116 @@ const SliderRow: React.FC<SliderRowProps> = ({ label, description, value, min, m
     />
   </div>
 );
+
+interface SelectRowProps {
+  label: string;
+  description?: string;
+  value: string;
+  options: { value: string; label: string }[];
+  onChange: (val: string) => void;
+  noBorder?: boolean;
+}
+
+const SelectRow: React.FC<SelectRowProps> = ({ label, description, value, options, onChange, noBorder }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const selectedLabel = options.find(o => o.value === value)?.label || value;
+
+  return (
+    <div style={{
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      padding: "16px 0",
+      borderBottom: noBorder ? "none" : "1px solid var(--glass-border)",
+    }}>
+      <div>
+        <div style={{ fontSize: "1.05rem", fontWeight: 500 }}>{label}</div>
+        {description && (
+          <div style={{ fontSize: "0.85rem", color: "var(--text-secondary)", marginTop: "4px" }}>
+            {description}
+          </div>
+        )}
+      </div>
+      
+      <div style={{ position: "relative" }}>
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: "12px",
+            padding: "8px 16px",
+            borderRadius: "12px",
+            border: "1px solid var(--glass-border)",
+            background: "rgba(128, 128, 128, 0.15)",
+            color: "var(--text-primary)",
+            fontSize: "0.95rem",
+            cursor: "pointer",
+            minWidth: "220px",
+            textAlign: "left",
+            transition: "all 0.2s"
+          }}
+          onMouseOver={(e) => (e.currentTarget.style.background = "rgba(128, 128, 128, 0.25)")}
+          onMouseOut={(e) => (e.currentTarget.style.background = "rgba(128, 128, 128, 0.15)")}
+        >
+          <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+            {selectedLabel}
+          </span>
+          <ChevronDown size={16} />
+        </button>
+
+        {isOpen && (
+          <>
+            <div 
+              onClick={() => setIsOpen(false)}
+              style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, zIndex: 99 }} 
+            />
+            <div 
+              className="glass-panel"
+              style={{
+                position: "absolute",
+                top: "calc(100% + 8px)",
+                right: 0,
+                zIndex: 100,
+                padding: "8px 0",
+                width: "280px",
+                maxHeight: "300px",
+                overflowY: "auto",
+                boxShadow: "0 10px 40px rgba(0,0,0,0.3)",
+              }}
+            >
+              {options.map((opt) => (
+                <div
+                  key={opt.value}
+                  onClick={() => {
+                    onChange(opt.value);
+                    setIsOpen(false);
+                  }}
+                  style={{
+                    padding: "10px 16px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    cursor: "pointer",
+                    color: value === opt.value ? "var(--accent-color)" : "var(--text-primary)",
+                    fontWeight: value === opt.value ? 600 : 400,
+                    transition: "background 0.2s",
+                  }}
+                  onMouseOver={(e) => (e.currentTarget.style.background = "rgba(128,128,128,0.15)")}
+                  onMouseOut={(e) => (e.currentTarget.style.background = "transparent")}
+                >
+                  <span>{opt.label}</span>
+                  {value === opt.value && <Check size={16} />}
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+};
 
 /* ────────────── color picker row ────────────── */
 
@@ -265,8 +375,8 @@ const GradientPreview: React.FC<{ from: string; to: string; angle: number }> = (
 
 export const Settings: React.FC = () => {
   const {
-    use24Hour, snoozeDuration, alarmVolume, showSeconds,
-    setUse24Hour, setSnoozeDuration, setAlarmVolume, setShowSeconds,
+    use24Hour, snoozeDuration, alarmVolume, showSeconds, clockTimezone,
+    setUse24Hour, setSnoozeDuration, setAlarmVolume, setShowSeconds, setClockTimezone,
 
     transparencyEnabled, transparencyAmount, bgMode, bgColor, bgImageUrl, gradientFrom, gradientTo, gradientAngle,
     blurEnabled, blurAmount,
@@ -391,6 +501,13 @@ export const Settings: React.FC = () => {
 
       {/* General */}
       <Section title="General">
+        <SelectRow
+          label="Primary Timezone"
+          description="Timezone for the main Clock page"
+          value={clockTimezone}
+          onChange={setClockTimezone}
+          options={(Intl as any).supportedValuesOf("timeZone").map((tz: string) => ({ value: tz, label: tz.replace(/_/g, " ") }))}
+        />
         <ToggleRow
           label="24-Hour Time"
           description="Use 24-hour format across all modules"

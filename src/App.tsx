@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Globe, AlarmClock, Timer, TimerReset, Settings as SettingsIcon, X, Minus, Maximize2 } from "lucide-react";
+import { Globe, AlarmClock, Timer, TimerReset, Settings as SettingsIcon, X, Minus, Maximize2, Clock as ClockIcon } from "lucide-react";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import "./App.css";
 import { useTimeStore } from "./store/useTimeStore";
@@ -10,11 +10,12 @@ import { AlarmRinger } from "./modules/Alarms/AlarmRinger";
 import { Stopwatch } from "./modules/Stopwatch/Stopwatch";
 import { Timers } from "./modules/Timers/Timers";
 import { Settings } from "./modules/Settings/Settings";
+import { Clock } from "./modules/Clock/Clock";
 
-type Module = "world-clock" | "alarms" | "stopwatch" | "timers" | "settings";
+type Module = "clock" | "world-clock" | "alarms" | "stopwatch" | "timers" | "settings";
 
 function App() {
-  const [activeModule, setActiveModule] = useState<Module>("world-clock");
+  const [activeModule, setActiveModule] = useState<Module>("clock");
   const initWorker = useTimeStore((state) => state.initWorker);
 
   // Appearance settings
@@ -34,6 +35,7 @@ function App() {
   }, [initWorker]);
 
   const navItems = [
+    { id: "clock", label: "Clock", icon: <ClockIcon size={20} /> },
     { id: "world-clock", label: "World Clock", icon: <Globe size={20} /> },
     { id: "alarms", label: "Alarms", icon: <AlarmClock size={20} /> },
     { id: "stopwatch", label: "Stopwatch", icon: <TimerReset size={20} /> },
@@ -43,6 +45,8 @@ function App() {
 
   const renderContent = () => {
     switch (activeModule) {
+      case "clock":
+        return <Clock />;
       case "world-clock":
         return <WorldClock />;
       case "alarms":
