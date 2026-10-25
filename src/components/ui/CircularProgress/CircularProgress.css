@@ -1,0 +1,46 @@
+/**
+ * ============================================================================
+ * File: CircularProgress.css
+ * Module: Core UI Primitives / CircularProgress
+ * Architectural Responsibility:
+ *   Styles for hardware-accelerated SVG stroke-dashoffset transitions and
+ *   absolute centering of countdown content.
+ * ============================================================================
+ */
+
+.ui-circular-progress {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ui-circular-progress__svg {
+  transform: rotate(-90deg);
+  display: block;
+}
+
+.ui-circular-progress__track {
+  fill: none;
+}
+
+.ui-circular-progress__indicator {
+  fill: none;
+  stroke-linecap: round;
+  transition: 
+    stroke-dashoffset 0.15s linear,
+    stroke 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.ui-circular-progress__center {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: auto;
+}

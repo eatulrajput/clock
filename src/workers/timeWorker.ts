@@ -1,17 +1,32 @@
-let intervalId: number | null = null;
+/**
+ * ============================================================================
+ * File: timeWorker.ts
+ * Module: Infrastructure / WebWorker Engine
+ * Architectural Responsibility:
+ *   Dedicated WebWorker interval timer providing non-throttled high-precision
+ *   time ticks every 100 milliseconds to prevent timer drift during OS sleep,
+ *   window minimization, or UI thread congestion (PRD section 3.2).
+ *
+ * Type Safety & Null Handling Contract:
+ *   - Strictly Typed Messages.
+ *   - Zero Null Policy: Timer identifier modeled as `number | undefined`.
+ * ============================================================================
+ */
 
-self.onmessage = (e) => {
-  if (e.data === "start") {
-    if (intervalId) return;
-    // Tick every 100ms for high precision (useful for stopwatch and timers)
-    // Using a dedicated web worker prevents UI thread blocking and background throttling.
-    intervalId = setInterval(() => {
+let intervalId: number | undefined = undefined;
+
+self.onmessage = (event: MessageEvent<string>) => {
+  if (event.data === "start") {
+    if (intervalId !== undefined) return;
+
+    // High precision tick every 100ms
+    intervalId = (setInterval(() => {
       self.postMessage({ type: "tick", timestamp: Date.now() });
-    }, 100) as unknown as number;
-  } else if (e.data === "stop") {
-    if (intervalId) {
+    }, 100) as unknown) as number;
+  } else if (event.data === "stop") {
+    if (intervalId !== undefined) {
       clearInterval(intervalId);
-      intervalId = null;
+      intervalId = undefined;
     }
   }
 };
