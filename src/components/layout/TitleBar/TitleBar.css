@@ -1,0 +1,74 @@
+/**
+ * ============================================================================
+ * File: TitleBar.css
+ * Module: Layout / TitleBar
+ * Architectural Responsibility:
+ *   Styles for Tauri custom title bar, macOS-style window traffic light buttons,
+ *   and native dragging regions.
+ * ============================================================================
+ */
+
+.ui-titlebar {
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  background-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
+  /* Window dragging region in Tauri WebViews */
+  -webkit-app-region: drag;
+  z-index: 1000;
+  flex-shrink: 0;
+}
+
+.ui-titlebar__drag-region {
+  flex: 1;
+  height: 100%;
+}
+
+.ui-titlebar__controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  -webkit-app-region: no-drag;
+}
+
+.ui-window-btn {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  color: rgba(0, 0, 0, 0.6);
+  transition: opacity 0.15s ease;
+}
+
+.ui-window-btn:hover svg {
+  opacity: 1;
+}
+
+.ui-window-btn svg {
+  opacity: 0;
+  transition: opacity 0.1s ease;
+}
+
+.ui-window-btn--close {
+  background-color: #FF5F56;
+  border: 1px solid #E0443E;
+}
+
+.ui-window-btn--minimize {
+  background-color: #FFBD2E;
+  border: 1px solid #DEA123;
+}
+
+.ui-window-btn--maximize {
+  background-color: #27C93F;
+  border: 1px solid #1AAB29;
+}
