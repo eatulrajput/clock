@@ -1,0 +1,22 @@
+# Dependabot configuration for Clock Tauri application
+# Reference: https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+
+version: 2
+updates:
+  # Cargo (Rust backend for Tauri)
+  - package-ecosystem: "cargo"
+    directory: "/src-tauri"
+    schedule:
+      interval: "weekly"
+    ignore:
+      # glib 0.18.5 is pinned transitively by Tauri 2's Linux runtime (tao / wry / webkit2gtk-rs 0.18 stack).
+      # glib >= 0.20 requires migrating the entire GTK stack to GTK4 (tauri upstream issue #12048 / #12561).
+      # Advisory RUSTSEC-2024-0429 (glib::VariantStrIter) is not used in application code.
+      - dependency-name: "glib"
+      - dependency-name: "glib-sys"
+
+  # npm / bun (Frontend React application)
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
