@@ -1,0 +1,105 @@
+/**
+ * ============================================================================
+ * File: Input.css
+ * Module: Core UI Primitives / Input
+ * Architectural Responsibility:
+ *   Styles for the liquid glass input field, focus rings, leading/trailing slots,
+ *   and error validation states.
+ * ============================================================================
+ */
+
+.ui-input-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+
+.ui-input-label {
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.ui-input-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background-color: rgba(120, 120, 128, 0.12);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  padding: 0 14px;
+  height: 42px;
+  transition: 
+    border-color 0.2s ease,
+    background-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.ui-input-box:focus-within {
+  background-color: rgba(120, 120, 128, 0.18);
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px rgba(10, 132, 255, 0.25);
+}
+
+.ui-input-box--error {
+  border-color: #FF453A !important;
+}
+
+.ui-input-box--error:focus-within {
+  box-shadow: 0 0 0 3px rgba(255, 69, 58, 0.25) !important;
+}
+
+.ui-input-field {
+  flex: 1;
+  border: none;
+  background: transparent;
+  outline: none;
+  font-family: inherit;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  height: 100%;
+  width: 100%;
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+.ui-input-field::placeholder {
+  color: var(--text-secondary);
+  opacity: 0.7;
+}
+
+.ui-input-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+
+.ui-input-clear-button {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  border-radius: 50%;
+  transition: color 0.15s ease;
+}
+
+.ui-input-clear-button:hover {
+  color: var(--text-primary);
+}
+
+.ui-input-helper-text {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.ui-input-error-text {
+  font-size: 0.8rem;
+  color: #FF453A;
+}

@@ -1,0 +1,108 @@
+/**
+ * ============================================================================
+ * File: DrumPicker.css
+ * Module: Core UI Primitives / DrumPicker
+ * Architectural Responsibility:
+ *   Styles for 3D perspective transformations, inertia dragging, lens highlighting,
+ *   and cylindrical top/bottom fading gradients.
+ * ============================================================================
+ */
+
+.ui-drum-time-picker {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  position: relative;
+  padding: 16px 0;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.ui-drum-column-container {
+  display: flex;
+  align-items: center;
+  position: relative;
+  height: 220px;
+  width: 90px;
+  perspective: 1000px;
+  cursor: grab;
+  touch-action: none;
+}
+
+.ui-drum-column-container:active {
+  cursor: grabbing;
+}
+
+.ui-drum-viewport {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ui-drum-item {
+  position: absolute;
+  width: 100%;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: 400;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transition: opacity 0.1s ease;
+  pointer-events: none;
+}
+
+.ui-drum-unit-label {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-left: -12px;
+  margin-right: 8px;
+  pointer-events: none;
+  z-index: 5;
+}
+
+/* Central Selection Lens Bar */
+.ui-drum-lens-bar {
+  position: absolute;
+  top: calc(50% - 20px);
+  left: 0;
+  right: 0;
+  height: 40px;
+  background-color: rgba(120, 120, 128, 0.15);
+  border-radius: 8px;
+  border-top: 1px solid var(--glass-border);
+  border-bottom: 1px solid var(--glass-border);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Cylindrical Depth Gradient Vignette */
+.ui-drum-vignette-top,
+.ui-drum-vignette-bottom {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 70px;
+  pointer-events: none;
+  z-index: 4;
+}
+
+.ui-drum-vignette-top {
+  top: 0;
+  background: linear-gradient(to bottom, var(--bg-color), transparent);
+}
+
+.ui-drum-vignette-bottom {
+  bottom: 0;
+  background: linear-gradient(to top, var(--bg-color), transparent);
+}

@@ -1,0 +1,92 @@
+/**
+ * ============================================================================
+ * File: Toggle.css
+ * Module: Core UI Primitives / Toggle
+ * Architectural Responsibility:
+ *   Styles and smooth cubic-bezier transitions for the iOS fluid switch.
+ * ============================================================================
+ */
+
+.ui-toggle-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.ui-toggle-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ui-toggle-title {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.ui-toggle-description {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+}
+
+.ui-toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 30px;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.ui-toggle-switch--disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.ui-toggle-input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+  position: absolute;
+}
+
+.ui-toggle-track {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(120, 120, 128, 0.32);
+  border-radius: 30px;
+  transition: background-color 0.25s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.ui-toggle-switch:focus-within .ui-toggle-track {
+  box-shadow: 0 0 0 3px rgba(10, 132, 255, 0.35);
+}
+
+.ui-toggle-thumb {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 2px;
+  bottom: 2px;
+  background-color: #FFFFFF;
+  border-radius: 50%;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  transition: transform 0.25s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* Checked State */
+.ui-toggle-switch--checked .ui-toggle-track {
+  background-color: var(--accent-color);
+}
+
+.ui-toggle-switch--checked .ui-toggle-thumb {
+  transform: translateX(20px);
+}

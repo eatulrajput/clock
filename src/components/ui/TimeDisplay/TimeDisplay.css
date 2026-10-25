@@ -1,0 +1,64 @@
+/**
+ * ============================================================================
+ * File: TimeDisplay.css
+ * Module: Core UI Primitives / TimeDisplay
+ * Architectural Responsibility:
+ *   Styles for monospaced tabular numbers layout, gradient text clipping,
+ *   and subtle drop shadow depth.
+ * ============================================================================
+ */
+
+.ui-time-display {
+  display: inline-flex;
+  align-items: baseline;
+  justify-content: center;
+  font-family: inherit;
+  font-variant-numeric: tabular-nums;
+  -webkit-font-feature-settings: "tnum";
+  font-feature-settings: "tnum";
+  line-height: 1;
+  letter-spacing: -0.03em;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.ui-time-display__digits {
+  font-weight: 200;
+  color: var(--text-primary);
+}
+
+.ui-time-display__separator {
+  opacity: 0.7;
+  margin: 0 2px;
+  font-weight: 200;
+}
+
+.ui-time-display__centiseconds {
+  font-size: 0.55em;
+  font-weight: 300;
+  color: var(--text-secondary);
+  margin-left: 4px;
+}
+
+.ui-time-display__ampm {
+  font-size: 0.35em;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-left: 10px;
+}
+
+/* ─────────────── Format Modes ─────────────── */
+
+.ui-time-display--digital-clock .ui-time-display__digits {
+  font-weight: 200;
+}
+
+.ui-time-display--stopwatch .ui-time-display__digits {
+  font-weight: 300;
+}
+
+.ui-time-display--countdown-timer .ui-time-display__digits {
+  font-weight: 300;
+}
